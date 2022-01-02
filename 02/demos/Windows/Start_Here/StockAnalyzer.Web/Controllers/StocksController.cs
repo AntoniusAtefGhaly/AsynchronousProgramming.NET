@@ -16,6 +16,7 @@ namespace StockAnalyzer.Web.Controllers
         [Route("api/stocks/{ticker}")] 
         public async Task<IHttpActionResult> Get(string ticker)
         {
+            Thread.Sleep(4000);
             var store = new DataStore(HostingEnvironment.MapPath("~/bin"));
 
             var data = await store.LoadStocks();
