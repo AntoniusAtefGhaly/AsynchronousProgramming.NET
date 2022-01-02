@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Newtonsoft.Json;
 using StockAnalyzer.Core.Domain;
 using StockAnalyzer.Windows.Services;
@@ -26,7 +27,7 @@ namespace StockAnalyzer.Windows
 
         CancellationTokenSource cancellationTokenSource = null;
 
-        private void Search_Click(object sender, RoutedEventArgs e)
+        private  void Search_Click(object sender, RoutedEventArgs e)
         {
             #region Before loading stock data
             var watch = new Stopwatch();
@@ -37,32 +38,47 @@ namespace StockAnalyzer.Windows
             Search.Content = "Cancel";
             #endregion
 
-            var lines = File.ReadAllLines(@"StockPrices_Small.csv");
-
-            var data = new List<StockPrice>();
-
-            foreach (var line in lines.Skip(1))
+            var task1 = Task.Run(() =>
             {
-                var segments = line.Split(',');
-
-                for (var i = 0; i < segments.Length; i++) segments[i] = segments[i].Trim('\'', '"');
-                var price = new StockPrice
-                {
-                    Ticker = segments[0],
-                    TradeDate = DateTime.ParseExact(segments[1], "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture),
-                    Volume = Convert.ToInt32(segments[6], CultureInfo.InvariantCulture),
-                    Change = Convert.ToDecimal(segments[7], CultureInfo.InvariantCulture),
-                    ChangePercent = Convert.ToDecimal(segments[8], CultureInfo.InvariantCulture),
-                };
-                data.Add(price);
+                var lines = File.ReadAllLines(@"StockPrices_Small1.csv");
+                Thread.Sleep(5000);
+                return  lines;
             }
+            );
 
-            Stocks.ItemsSource = data.Where(price => price.Ticker == Ticker.Text);
+            var task2=task1.ContinueWith(t=> {
+                var lines = t.Result;
+                var data = new List<StockPrice>();
+                foreach (var line in lines.Skip(1))
+                {
+                    var segments = line.Split(',');
+
+                    for (var i = 0; i < segments.Length; i++) segments[i] = segments[i].Trim('\'', '"');
+                    var price = new StockPrice
+                    {
+                        Ticker = segments[0],
+                        TradeDate = DateTime.ParseExact(segments[1], "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture),
+                        Volume = Convert.ToInt32(segments[6], CultureInfo.InvariantCulture),
+                        Change = Convert.ToDecimal(segments[7], CultureInfo.InvariantCulture),
+                        ChangePercent = Convert.ToDecimal(segments[8], CultureInfo.InvariantCulture),
+                    };
+                    data.Add(price);
+                }
+                Dispatcher.Invoke(() => {
+                    Stocks.ItemsSource = data.Where(price => price.Ticker == Ticker.Text);
+                });
+            });
 
             #region After stock data is loaded
-            StocksStatus.Text = $"Loaded stocks for {Ticker.Text} in {watch.ElapsedMilliseconds}ms";
-            StockProgress.Visibility = Visibility.Hidden;
-            Search.Content = "Search";
+            var task3 = task1.ContinueWith((T) => {
+                Dispatcher.Invoke(
+                    ()=>
+                    {
+                        StocksStatus.Text = $"Loaded stocks for {Ticker.Text} in {watch.ElapsedMilliseconds}ms";
+                        StockProgress.Visibility = Visibility.Hidden;
+                        Search.Content = "Search";
+                    });
+            });
             #endregion
 
             cancellationTokenSource = null;

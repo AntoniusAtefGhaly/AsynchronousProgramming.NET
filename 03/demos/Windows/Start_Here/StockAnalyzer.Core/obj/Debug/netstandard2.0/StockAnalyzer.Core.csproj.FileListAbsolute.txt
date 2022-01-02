@@ -1,0 +1,9 @@
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\bin\Debug\netstandard2.0\StockAnalyzer.Core.deps.json
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\bin\Debug\netstandard2.0\StockAnalyzer.Core.dll
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\bin\Debug\netstandard2.0\StockAnalyzer.Core.pdb
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.AssemblyInfoInputs.cache
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.AssemblyInfo.cs
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.csproj.CoreCompileInputs.cache
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.dll
+D:\training\Getting Started with Asynchronous Programming in .NET\03\demos\Windows\Start_Here\StockAnalyzer.Core\obj\Debug\netstandard2.0\StockAnalyzer.Core.pdb
