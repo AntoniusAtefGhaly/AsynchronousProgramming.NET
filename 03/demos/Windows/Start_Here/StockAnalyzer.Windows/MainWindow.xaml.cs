@@ -27,7 +27,7 @@ namespace StockAnalyzer.Windows
 
         CancellationTokenSource cancellationTokenSource = null;
 
-        private  void Search_Click(object sender, RoutedEventArgs e)
+        private async void Search_Click(object sender, RoutedEventArgs e)
         {
             #region Before loading stock data
             var watch = new Stopwatch();
@@ -37,55 +37,41 @@ namespace StockAnalyzer.Windows
 
             Search.Content = "Cancel";
             #endregion
-
-            var task1 = Task.Run(() =>
+            #region cancelation
+            if (cancellationTokenSource != null)
             {
-                var lines = File.ReadAllLines(@"StockPrices_Small1.csv");
-                Thread.Sleep(5000);
-                return  lines;
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource = null;
+                return;
             }
-            );
-
-            var task2=task1.ContinueWith(t=> {
-                var lines = t.Result;
-                var data = new List<StockPrice>();
-                foreach (var line in lines.Skip(1))
-                {
-                    var segments = line.Split(',');
-
-                    for (var i = 0; i < segments.Length; i++) segments[i] = segments[i].Trim('\'', '"');
-                    var price = new StockPrice
-                    {
-                        Ticker = segments[0],
-                        TradeDate = DateTime.ParseExact(segments[1], "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture),
-                        Volume = Convert.ToInt32(segments[6], CultureInfo.InvariantCulture),
-                        Change = Convert.ToDecimal(segments[7], CultureInfo.InvariantCulture),
-                        ChangePercent = Convert.ToDecimal(segments[8], CultureInfo.InvariantCulture),
-                    };
-                    data.Add(price);
-                }
-                Dispatcher.Invoke(() => {
-                    Stocks.ItemsSource = data.Where(price => price.Ticker == Ticker.Text);
-                });
-            });
-
-            #region After stock data is loaded
-            var task3 = task1.ContinueWith((T) => {
-                Dispatcher.Invoke(
-                    ()=>
-                    {
-                        StocksStatus.Text = $"Loaded stocks for {Ticker.Text} in {watch.ElapsedMilliseconds}ms";
-                        StockProgress.Visibility = Visibility.Hidden;
-                        Search.Content = "Search";
-                    });
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Token.Register(()=> {
+                Notes.Text += "CALCELLATION REQUESTED";
             });
             #endregion
+            try
+            {
+                var service =new StockService();
+                var data = await service.GetStockPricesFor(Ticker.Text,cancellationTokenSource.Token);
+                Stocks.ItemsSource = data;
+            }
+            catch (Exception ex)
+            {
+                Notes.Text += ex.Message;
+            }
+            #region After stock data is loaded
 
+            StocksStatus.Text = $"Loaded stocks for {Ticker.Text} in {watch.ElapsedMilliseconds}ms";
+                        StockProgress.Visibility = Visibility.Hidden;
+                        Search.Content = "Search";
+     
+            #endregion
             cancellationTokenSource = null;
         }
 
         private Task<List<string>> SearchForStocks(CancellationToken cancellationToken)
         {
+            
             var loadLinesTask = Task.Run(async () =>
             {
                 var lines = new List<string>();
@@ -102,13 +88,11 @@ namespace StockAnalyzer.Windows
                         lines.Add(line);
                     }
                 }
-
                 return lines;
             }, cancellationToken);
 
             return loadLinesTask;
         }
-
         private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
