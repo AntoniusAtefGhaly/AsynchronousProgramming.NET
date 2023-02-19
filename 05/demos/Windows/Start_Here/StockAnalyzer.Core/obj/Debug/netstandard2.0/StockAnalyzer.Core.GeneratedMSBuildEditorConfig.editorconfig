@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = StockAnalyzer.Core
+build_property.ProjectDir = D:\training\Getting Started with Asynchronous Programming in .NET\05\demos\Windows\Start_Here\StockAnalyzer.Core\

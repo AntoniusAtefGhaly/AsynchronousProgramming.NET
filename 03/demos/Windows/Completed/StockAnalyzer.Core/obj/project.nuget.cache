@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "NZWYn0bqUnVdKy7GtnYiu6oLTNoVXLO6lM/oztdNt9PHkKSurUeI42cc7v5KrtD8JQaAL38sz1bNSrIg4bfmKA==",
+  "dgSpecHash": "EDZqFcP57ai+a+u0qEZD1OZPrC0ivtIIzn7tW2qS4swIokWTlYtjT0DF/uTaTh1q5RXZG5buI+nLUokg3vF/FA==",
   "success": true,
   "projectFilePath": "D:\\training\\Getting Started with Asynchronous Programming in .NET\\03\\demos\\Windows\\Completed\\StockAnalyzer.Core\\StockAnalyzer.Core.csproj",
   "expectedPackageFiles": [
